@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ゆりの東京ツアー｜新橋の夜と、アートと、着物と。</title>
+<meta name="description" content="金沢在住のガイド・ゆりが、予約のある日にだけ東京へ来てご案内する小さなツアー。新橋の飲み歩き、清澄白河のアート散歩、神楽坂から新橋への夕方さんぽ。座れて、急がない、膝にやさしい設計です。">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ゆりの東京ツアー">
+<meta property="og:title" content="ゆりの東京ツアー｜新橋の夜と、アートと、着物と。">
+<meta property="og:description" content="金沢在住のガイド・ゆりが、予約のある日にだけ東京へ来てご案内する小さなツアー。新橋の夜、清澄白河のアート、着物で歩く神楽坂。">
+<meta property="og:url" content="https://yukitchy.github.io/yuri-tokyo-tours/">
+<meta property="og:image" content="https://yukitchy.github.io/yuri-tokyo-tours/ogp/og1.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --ink:#1d2530; --navy:#14213d; --red:#c0272d; --paper:#faf7f1; --line:#e3ddd0;
+  --muted:#6b7280; --card:#ffffff;
+  --serif:"Hiragino Mincho ProN","Hiragino Mincho Pro","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  --sans:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","YuGothic","Noto Sans JP",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);line-height:1.8;font-size:15.5px;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+header.site{position:sticky;top:0;z-index:1200;background:rgba(250,247,241,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.logo{font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:.04em;color:var(--navy);text-decoration:none;white-space:nowrap}
+.logo span{color:var(--red)}
+nav.main{display:flex;gap:20px}
+nav.main a{text-decoration:none;font-size:13px;color:var(--ink);white-space:nowrap}
+nav.main a:hover{color:var(--red)}
+@media(max-width:560px){nav.main{gap:13px}nav.main a{font-size:12px}.logo{font-size:16px}}
+
+/* hero */
+.hero{position:relative;background:var(--navy)}
+.hero-grid{display:grid;grid-template-columns:1.9fr 1fr;grid-template-rows:1fr 1fr;gap:4px;height:min(72vh,560px)}
+.hero-grid figure{overflow:hidden}
+.hero-grid img{width:100%;height:100%;object-fit:cover}
+.hero-grid .a{grid-row:1/3}
+.hero-cap{position:absolute;left:0;right:0;bottom:0;padding:56px 0 26px;background:linear-gradient(transparent,rgba(8,12,20,.82));color:#fff}
+.hero-cap .kicker{font-size:12.5px;letter-spacing:.14em;color:#f0c9cb;margin-bottom:6px}
+.hero-cap h1{font-family:var(--serif);font-weight:700;font-size:clamp(21px,5.6vw,42px);line-height:1.35;white-space:nowrap}
+.hero-cap p{margin-top:8px;font-size:clamp(12.5px,2.6vw,15px);color:#e8ebf0;max-width:640px}
+@media(max-width:560px){.hero-grid{height:46vh}}
+
+/* intro blocks */
+.intro{padding:34px 0 6px}
+.intro-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.iblock{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px}
+.iblock .lab{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--red);margin-bottom:5px}
+.iblock p{font-size:13.5px;line-height:1.65}
+@media(max-width:860px){.intro-grid{grid-template-columns:repeat(2,1fr)}.iblock:last-child{grid-column:1/3}}
+
+/* care band */
+.care{margin:26px 0 0;background:#fff;border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;padding:18px 20px}
+.care h2{font-family:var(--serif);font-size:19px;color:var(--navy);white-space:nowrap}
+.care ul{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;list-style:none;margin-top:10px}
+.care li{font-size:13.5px;line-height:1.65;padding-left:16px;position:relative}
+.care li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--red)}
+@media(max-width:700px){.care ul{grid-template-columns:1fr}}
+
+section{padding:44px 0 8px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+.sec-head .no{font-family:var(--serif);color:var(--red);font-size:15px}
+.sec-head h2{font-family:var(--serif);font-size:clamp(20px,4.6vw,27px);color:var(--navy);white-space:nowrap}
+.sec-head p{font-size:13px;color:var(--muted)}
+
+/* tours (JLE style) */
+.tour{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:26px}
+.tour .ph{height:300px;overflow:hidden}
+.tour .ph img{width:100%;height:100%;object-fit:cover}
+.tour .body{padding:22px 24px 20px}
+.tour h3{font-family:var(--serif);font-size:clamp(19px,4.4vw,24px);color:var(--navy);line-height:1.4}
+.tour .lead{margin-top:8px;font-size:14.5px}
+.tour h4{font-size:13px;letter-spacing:.08em;color:var(--red);margin:16px 0 4px}
+.tour .txt{font-size:14px;line-height:1.85}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;list-style:none}
+.chips li{font-size:12.5px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.meta{display:flex;flex-wrap:wrap;gap:0;margin-top:18px;border-top:1px solid var(--line)}
+.meta div{padding:10px 22px 2px 0;margin-right:22px}
+.meta .k{font-size:11px;color:var(--muted);letter-spacing:.1em}
+.meta .v{font-family:var(--serif);font-size:17px;color:var(--navy)}
+@media(max-width:560px){.tour .ph{height:210px}.tour .body{padding:18px 16px 16px}}
+
+/* map */
+#map{height:420px;border-radius:14px;border:1px solid var(--line);z-index:1}
+.pin-card{width:96px;background:#fff;border-radius:9px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.45);position:relative}
+.pin-card .hd{background:var(--red);color:#fff;font-size:11px;font-weight:700;text-align:center;padding:2px 0;letter-spacing:.06em}
+.pin-card img{width:96px;height:64px;object-fit:cover}
+.pin-card .nm{font-size:10.5px;text-align:center;padding:3px 2px 4px;color:var(--ink);line-height:1.3}
+.pin-card::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);border:5px solid transparent;border-top:9px solid #fff}
+.leaflet-popup-content{font-family:var(--sans);font-size:13px;line-height:1.6}
+@media(max-width:560px){#map{height:340px}}
+
+/* food tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-decoration:none}
+.tile .ph{position:relative;height:170px;overflow:hidden}
+.tile .ph img{width:100%;height:100%;object-fit:cover}
+.tile .pin-ic{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(20,33,61,.85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+.tile .row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:10px 12px 12px}
+.tile .nm{font-weight:700;font-size:14.5px}
+.tile .hr{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.tile .tag{display:inline-block;font-size:10.5px;color:var(--red);border:1px solid #eccdd0;border-radius:4px;padding:0 6px;margin:10px 0 0 12px}
+@media(max-width:700px){.tiles{grid-template-columns:1fr}.tile .ph{height:190px}}
+
+/* profile */
+.profile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 24px;display:grid;grid-template-columns:150px 1fr;gap:26px}
+.avatar{width:150px;height:150px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:64px}
+.profile .role{font-size:12px;letter-spacing:.14em;color:var(--red);font-weight:700}
+.profile h3{font-family:var(--serif);font-size:26px;color:var(--navy)}
+.profile .msg{font-size:14.5px;margin-top:8px}
+.profile .msg p+p{margin-top:10px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin-top:14px}
+.facts li{font-size:12.5px;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+@media(max-width:640px){.profile{grid-template-columns:1fr;justify-items:center;text-align:left}.avatar{width:110px;height:110px;font-size:46px}}
+
+/* flow */
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.step .n{font-family:var(--serif);color:var(--red);font-size:22px}
+.step h3{font-family:var(--serif);font-size:16.5px;color:var(--navy);margin:4px 0 6px}
+.step p{font-size:13.5px;line-height:1.7}
+@media(max-width:700px){.flow{grid-template-columns:1fr}}
+
+/* CTA */
+.cta{margin:46px 0 0;background:#101623;color:#fff;border-radius:14px;padding:30px 24px;text-align:center}
+.cta h2{font-family:var(--serif);font-size:clamp(19px,4.6vw,25px);white-space:nowrap}
+.cta p{font-size:13.5px;color:#c9d1de;margin:10px auto 18px;max-width:560px}
+.cta .btn{display:inline-block;background:var(--red);color:#fff;text-decoration:none;font-weight:700;font-size:15px;border-radius:999px;padding:13px 38px}
+.cta .note{margin-top:14px;font-size:12px;color:#8b96a8}
+
+footer.site{margin-top:52px;border-top:1px solid var(--line);padding:22px 0 34px;font-size:12px;color:var(--muted)}
+footer.site .wrap{display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:space-between}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="logo" href="#">ゆりの東京ツアー<span>。</span></a>
+    <nav class="main">
+      <a href="#tours">ツアー</a>
+      <a href="#mapsec">エリア</a>
+      <a href="#guide">ガイド</a>
+      <a href="#flow">流れ</a>
+      <a href="#contact">お問い合わせ</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-grid">
+    <figure class="a"><img src="img/hero-sl.jpg" alt="新橋駅 SL広場の蒸気機関車"></figure>
+    <figure><img src="img/hero-kagurazaka.jpg" alt="神楽坂の石畳の路地"></figure>
+    <figure><img src="img/hero-kiyosumi.jpg" alt="清澄庭園の池"></figure>
+  </div>
+  <div class="hero-cap">
+    <div class="wrap">
+      <div class="kicker">金沢から、予約のある日にだけ来るガイド</div>
+      <h1>新橋の夜と、アートと、着物と。</h1>
+      <p>ふだんは金沢で看護師をしている「ゆり」が、ご予約の入った日に東京へ来てご案内する、小さなプライベートツアーです。</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap intro">
+  <div class="intro-grid">
+    <div class="iblock"><div class="lab">FOR</div><p>東京の飲みとアートを、地元の目線でゆっくり楽しみたい方へ</p></div>
+    <div class="iblock"><div class="lab">WHEN</div><p>ゆりの東京滞在日のみ開催。ご予約が確定したら、金沢から東京へ来ます</p></div>
+    <div class="iblock"><div class="lab">MEET</div><p>新橋駅 SL広場など、ツアーごとに分かりやすい場所で集合します</p></div>
+    <div class="iblock"><div class="lab">FIRST</div><p>まずは座って一杯、あるいは美術館へ。最初から飛ばしません</p></div>
+    <div class="iblock"><div class="lab">THEN</div><p>あとはその日の空気で。路地をのぞいて、気になる店に入ります</p></div>
+  </div>
+
+  <div class="care">
+    <h2>座れて、急がないツアーです</h2>
+    <ul>
+      <li>立ち飲みではなく、座って飲める店を中心に選びます</li>
+      <li>移動は短く、歩く距離は事前にご相談のうえ決めます</li>
+      <li>看護師のガイドです。体調の変化にも気づける距離で歩きます</li>
+    </ul>
+  </div>
+</div>
+
+<section id="tours">
+<div class="wrap">
+<div class="sec-head"><span class="no">01</span><h2>ツアー</h2><p>料金はお問い合わせください</p></div>
+
+<article class="tour">
+<div class="ph"><img src="img/hero-sl.jpg" alt="新橋駅 SL広場"></div>
+<div class="body">
+<h3>新橋ナイト — 着物で歩く、飲んべえの街</h3>
+<p class="lead">サラリーマンの聖地・新橋を、着物姿のガイドと飲み歩く夜のツアーです。SL広場に集合して、烏森口の居酒屋街へ。観光地化されていない、仕事帰りの東京の夜をご案内します。</p>
+<h4></h4>
+<p class="txt">まずは座れる居酒屋で乾杯して、その日のおすすめを。路地の小さな店、常連さんの空気を邪魔しない入り方、注文のしかたまでガイドが引き受けます。ふぐや季節の肴など、少し背伸びした一軒を挟むこともできます。締めは SL広場の機関車を見ながら、その日の振り返りを。</p>
+<h4></h4>
+<p class="txt">専属ガイドの同行、店選びと予約のサポート、注文のお手伝い。飲食代は当日、実費をお支払いください。</p>
+<h4></h4>
+<p class="txt">立ちっぱなしの行程にはしません。お酒を飲まない方も、ソフトドリンクで同じように楽しめます。お一人様も歓迎です。</p>
+<ul class="chips"><li>🍶 座って飲める店中心</li><li>👘 着物でご案内</li><li>👥 少人数・お一人様歓迎</li></ul>
+<div class="meta">
+<div><div class="k">所要時間</div><div class="v">約2.5時間</div></div>
+<div><div class="k">開始時間</div><div class="v">18:00 目安</div></div>
+<div><div class="k">料金</div><div class="v">お問い合わせください</div></div>
+</div>
+</div>
+</article>
+
+<article class="tour">
+<div class="ph"><img src="img/hero-kiyosumi.jpg" alt="清澄庭園"></div>
+<div class="body">
+<h3>清澄白河 アート散歩 — 美術館と庭園と、老舗の昼ごはん</h3>
+<p class="lead">アート好きのゆりが一番おすすめしたい、昼のツアーです。東京都現代美術館と清澄庭園をゆっくりめぐり、お昼は地元の老舗で。静かで、緑が多くて、歩く距離も短めです。</p>
+<h4></h4>
+<p class="txt">東京都現代美術館では、企画展と常設展から見どころを絞ってご案内します。そのあとは清澄庭園を一周 — と言っても急ぎません。池のほとりで休みながら、岩や松の話を。お昼は清澄白河の老舗「深川亭」で、鉄板の昼定食をいただきます。</p>
+<h4></h4>
+<p class="txt">専属ガイドの同行、行程の設計、当日の案内。施設の入場料とお食事代は別途、実費をお支払いください。</p>
+<h4></h4>
+<p class="txt">休憩をはさみながら歩く、膝にやさしい行程です。美術館の休館日（月曜）には開催しません。</p>
+<ul class="chips"><li>🎨 美術館と庭園</li><li>🪑 休憩多めの設計</li><li>🍱 老舗の昼ごはん</li></ul>
+<div class="meta">
+<div><div class="k">所要時間</div><div class="v">約3時間</div></div>
+<div><div class="k">開始時間</div><div class="v">10:30 目安</div></div>
+<div><div class="k">料金</div><div class="v">お問い合わせください</div></div>
+</div>
+</div>
+</article>
+
+<article class="tour">
+<div class="ph"><img src="img/hero-kagurazaka.jpg" alt="神楽坂の石畳の路地"></div>
+<div class="body">
+<h3>神楽坂さんぽ、新橋の夜 — 夕方の街ホッピング</h3>
+<p class="lead">石畳の路地が残る神楽坂を夕方に歩いて、夜は新橋へ移動して一杯。昼の顔と夜の顔、ふたつの東京を一度に見るツアーです。</p>
+<h4></h4>
+<p class="txt">赤城神社にお参りして、石畳の横丁をのぞきながら神楽坂を下ります。早めの夕食に、神楽坂の人気ラーメン「麺屋ふぅふぅ亭」で一杯。そのあとは電車で新橋へ。SL広場の夜景を眺めて、居酒屋で締めます。移動は電車1本、歩く距離は短めに設計しています。</p>
+<h4></h4>
+<p class="txt">専属ガイドの同行、店選びと注文のサポート。飲食代と交通費は別途、実費をお支払いください。</p>
+<h4></h4>
+<p class="txt">神楽坂の坂道は、無理のないペースで歩きます。雨の日は新橋だけの短縮版にも変更できます。</p>
+<ul class="chips"><li>🏮 路地と横丁の街歩き</li><li>🚃 移動は電車1本</li><li>🌆 昼と夜の境目を歩く</li></ul>
+<div class="meta">
+<div><div class="k">所要時間</div><div class="v">約3.5時間</div></div>
+<div><div class="k">開始時間</div><div class="v">16:00 目安</div></div>
+<div><div class="k">料金</div><div class="v">お問い合わせください</div></div>
+</div>
+</div>
+</article>
+</div>
+</section>
+
+<section id="mapsec">
+<div class="wrap">
+<div class="sec-head"><span class="no">02</span><h2>案内エリア</h2><p>ピンをタップすると場所が出ます</p></div>
+<div id="map"></div>
+</div>
+</section>
+
+<section id="food">
+<div class="wrap">
+<div class="sec-head"><span class="no">03</span><h2>ツアーで寄る店</h2><p>タップで Google マップへ</p></div>
+<div class="tiles">
+<a class="tile" href="https://www.google.com/maps/search/?api=1&query=%E7%8E%84%E5%93%81+%E9%8A%80%E5%BA%A7%E6%96%B0%E6%A9%8B" target="_blank" rel="noopener">
+<div class="ph"><img src="img/tile-genpin.jpg" alt="玄品 銀座新橋のふぐ刺し"><span class="pin-ic">📍</span></div>
+<span class="tag">ふぐ・新橋</span>
+<div class="row"><span class="nm">玄品 銀座新橋</span><span class="hr">平日 16:00–22:00</span></div>
+</a>
+<a class="tile" href="https://www.google.com/maps/search/?api=1&query=%E6%B7%B1%E5%B7%9D%E4%BA%AD+%E6%B8%85%E6%BE%84%E7%99%BD%E6%B2%B3" target="_blank" rel="noopener">
+<div class="ph"><img src="img/tile-fukagawatei.jpg" alt="深川亭の鉄板料理"><span class="pin-ic">📍</span></div>
+<span class="tag">鉄板・定食 / 清澄白河</span>
+<div class="row"><span class="nm">深川亭</span><span class="hr">11:30–14:00 / 17:30–21:00</span></div>
+</a>
+<a class="tile" href="https://www.google.com/maps/search/?api=1&query=%E9%BA%BA%E5%B1%8B%E3%81%B5%E3%81%85%E3%81%B5%E3%81%85%E4%BA%AD+%E7%A5%9E%E6%A5%BD%E5%9D%82" target="_blank" rel="noopener">
+<div class="ph"><img src="img/tile-fuufuutei.jpg" alt="麺屋ふぅふぅ亭のラーメン"><span class="pin-ic">📍</span></div>
+<span class="tag">ラーメン / 神楽坂</span>
+<div class="row"><span class="nm">麺屋ふぅふぅ亭</span><span class="hr">11:30–22:00</span></div>
+</a>
+</div>
+</div>
+</section>
+
+<section id="guide">
+  <div class="wrap">
+    <div class="sec-head"><span class="no">04</span><h2>ガイド紹介</h2></div>
+    <div class="profile">
+      <div class="avatar">ゆ</div>
+      <div>
+        <div class="role">ツアーガイド</div>
+        <h3>ゆり</h3>
+        <div class="msg">
+          <p>はじめまして。ふだんは金沢に住んで、看護師として働いています。</p>
+          <p>東京で好きなのは、新宿から新橋にかけての景色です。なかでも新橋の飲み屋街は、仕事帰りの人たちの「おつかれさま」が聞こえてくるようで、何度行っても飽きません。着物を着て歩くと、街の見え方が少し変わります。その感覚を、一緒に味わってもらえたらうれしいです。</p>
+          <p>アートも好きで、美術館のある街を歩くのが休日の楽しみです。白川郷では、ガイドをした方から「またやって」と声をかけていただいたこともあります。</p>
+          <p>私は膝があまり良くないので、自分のツアーは「座れて、急がない」ことを大事に作っています。歩くのが不安な方も、どうぞそのまま来てください。</p>
+          <p>ご予約が入ったら、金沢から東京へ行きます。お会いできる日を楽しみにしています。</p>
+        </div>
+        <ul class="facts">
+          <li>🏠 金沢在住</li>
+          <li>🩺 看護師</li>
+          <li>👘 着物でご案内</li>
+          <li>🎨 アート好き</li>
+          <li>🏔 白川郷ガイドの実績あり</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="wrap">
+    <div class="sec-head"><span class="no">05</span><h2>ご利用の流れ</h2></div>
+    <div class="flow">
+      <div class="step"><div class="n">1</div><h3>お問い合わせ・ご希望の日程</h3><p>行きたいツアーと、ご希望の日程をお知らせください。人数や、歩く量のご希望もこのときに。</p></div>
+      <div class="step"><div class="n">2</div><h3>日程の確定</h3><p>ゆりの東京行きの日程と合わせて、開催日を確定します。店の予約もこちらで進めます。</p></div>
+      <div class="step"><div class="n">3</div><h3>当日、集合場所で</h3><p>あとは楽しむだけ。注文も、乗り換えも、ガイドにお任せください。</p></div>
+    </div>
+
+    <div class="cta" id="contact">
+      <h2>まずは、相談から</h2>
+      <p>このページは公開準備中です。ツアーの内容や日程について、詳しいご案内はもう少しだけお待ちください。</p>
+      <a class="btn" href="#tours">ツアーを見てみる</a>
+      <div class="note">現在、予約受付の準備をしています</div>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div>ゆりの東京ツアー（準備中）</div>
+    <div>写真: 新橋 SL広場 — Mike Peel (CC BY-SA 4.0, Wikimedia Commons)／その他はツアー撮影の実写真</div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map = L.map('map', {scrollWheelZoom:false}).setView([35.685, 139.765], 11);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  maxZoom: 19
+}).addTo(map);
+var spots = [
+  {n:1, name:'新橋駅 SL広場', sub:'新橋ナイトの集合場所', img:'img/pin-sl.jpg', lat:35.6671, lng:139.7576},
+  {n:2, name:'神楽坂・赤城神社', sub:'夕方さんぽの出発点', img:'img/pin-kagurazaka.jpg', lat:35.7020, lng:139.7355},
+  {n:3, name:'清澄庭園', sub:'アート散歩の庭園', img:'img/pin-kiyosumi.jpg', lat:35.6799, lng:139.7970}
+];
+spots.forEach(function(s){
+  var icon = L.divIcon({
+    className:'pin-wrap',
+    html:'<div class="pin-card"><div class="hd">'+s.n+'</div><img src="'+s.img+'" alt=""><div class="nm">'+s.name+'</div></div>',
+    iconSize:[96,118], iconAnchor:[48,118], popupAnchor:[0,-112]
+  });
+  L.marker([s.lat,s.lng],{icon:icon}).addTo(map)
+    .bindPopup('<b>'+s.name+'</b><br>'+s.sub);
+});
+</script>
+</body>
+</html>

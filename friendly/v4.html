@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokyo with Yuri | Small private tours, as if visiting a friend (Café cozy)</title>
+<meta name="description" content="Yuri, a nurse and guide from Kanazawa, comes to Tokyo for small private tours: Shimbashi at night in kimono, an art walk in Kiyosumi-Shirakawa, and a Kagurazaka stroll. Sit-down places, no rushing.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Courier+Prime:wght@400;700&family=Libre+Franklin:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+.cq,.sh,.cta,.tour .tx{container-type:inline-size}
+a{color:inherit}
+ul,ol{list-style:none}
+.nw{white-space:nowrap}
+#map{height:400px;z-index:1}
+@media(max-width:560px){#map{height:330px}}
+.pin-card{width:auto;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.22);position:relative}
+.pin-card img{width:96px;height:62px;object-fit:cover}
+.pin-card .nm{font-size:12px;font-weight:600;text-align:center;padding:2px 3px 4px;line-height:1.3;color:#333;white-space:nowrap}
+.pin-card::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);border:5px solid transparent;border-top:9px solid #fff}
+
+:root{--kraft:#e8d9bf;--paper:#f7efe1;--ink:#3b2b1e;--mut:#7a6650;--br:#9a5b2e;--gr:#5e7550;--line:#cdb894}
+body{background:var(--kraft);background-image:radial-gradient(rgba(120,80,40,.07) 1px,transparent 1.2px);background-size:7px 7px;color:var(--ink);font:400 16px/1.75 "Libre Franklin",sans-serif}
+.w{max-width:1000px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:"Young Serif",serif;font-weight:400}
+.mono{font-family:"Courier Prime",monospace}
+.stamp{display:inline-block;font-family:"Courier Prime",monospace;font-weight:700;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--br);border:2px solid var(--br);border-radius:6px;padding:2px 10px;transform:rotate(-2deg)}
+.stamp span{letter-spacing:.04em;font-weight:400;margin-left:6px}
+nav.top{display:flex;justify-content:space-between;align-items:center;height:64px}
+nav.top .logo{font-family:"Young Serif",serif;font-size:22px;text-decoration:none}
+nav.top .links{display:flex;gap:20px;font-family:"Courier Prime",monospace;font-size:14px}nav.top .links a{text-decoration:none}
+@media(max-width:600px){nav.top .links a:nth-child(n+3){display:none}nav.top .links{gap:14px}}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--paper);border-radius:6px;box-shadow:0 2px 0 var(--line),0 18px 40px rgba(80,50,20,.12);overflow:hidden;margin-top:6px}
+.hero .ph{position:relative}.hero .ph img{width:100%;height:100%;object-fit:cover;min-height:520px;object-position:50% 30%}
+.hero .tx{padding:44px 40px;display:flex;flex-direction:column;justify-content:center}
+.hero .open{font-family:"Courier Prime",monospace;font-size:13px;color:var(--gr);letter-spacing:.12em;text-transform:uppercase}
+.hero h1{font-size:min(50px,10cqi);line-height:1.12;margin:12px 0 16px;white-space:nowrap}
+.hero p{font-size:16.5px;color:#55432f}
+.hero .sig{margin-top:22px;display:flex;gap:12px;align-items:center}
+.hero .sig img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.hero .sig span{font-family:"Courier Prime",monospace;font-size:14px}
+@media(max-width:820px){.hero{grid-template-columns:1fr}.hero .ph img{min-height:0;aspect-ratio:4/5}.hero .tx{padding:28px 22px}}
+.key{margin-top:26px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.key div{background:var(--paper);border-radius:6px;padding:16px;box-shadow:0 2px 0 var(--line)}
+.key dt{font-family:"Courier Prime",monospace;font-weight:700;color:var(--br);font-size:13px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px dashed var(--line);padding-bottom:6px;margin-bottom:8px}
+.key dd{font-size:14px;line-height:1.6}
+@media(max-width:860px){.key{grid-template-columns:1fr 1fr}.key div:last-child{grid-column:1/3}}
+@media(max-width:420px){.key{grid-template-columns:1fr}.key div:last-child{grid-column:auto}}
+.care{margin-top:26px;background:var(--gr);color:#f5efe0;border-radius:6px;padding:26px 28px;display:grid;grid-template-columns:1fr 1.6fr;gap:26px;align-items:center}
+.care h2{font-size:min(28px,8cqi);white-space:nowrap;line-height:1.2}
+.care .stamp{color:#f1e3c4;border-color:#f1e3c4;margin-bottom:10px}
+.care li{font-size:14.5px;padding:8px 0;border-bottom:1px dashed rgba(245,239,224,.35)}.care li:last-child{border:0}
+@media(max-width:760px){.care{grid-template-columns:1fr;gap:10px;padding:22px 18px}}
+section{padding:76px 0 0}
+.sh{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:24px}
+.sh h2{font-size:min(42px,9cqi);white-space:nowrap;line-height:1.1}
+.menu{background:var(--paper);border-radius:6px;box-shadow:0 2px 0 var(--line),0 18px 40px rgba(80,50,20,.1);padding:14px 34px 30px}
+.menu .hd{text-align:center;padding:16px 0 6px;border-bottom:2px solid var(--ink)}
+.menu .hd h3{font-size:min(28px,8cqi);white-space:nowrap}
+.menu .hd .mono{font-size:13px;color:var(--mut)}
+.tour{display:grid;grid-template-columns:230px 1fr;gap:28px;padding:30px 0;border-bottom:1px dashed var(--line)}
+.tour:last-child{border:0;padding-bottom:6px}
+.tour .ph img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px;border:6px solid #fff;box-shadow:0 3px 10px rgba(80,50,20,.15)}
+.tour .line{display:flex;align-items:baseline;gap:10px}
+.tour h3{font-size:min(30px,8.2cqi);white-space:nowrap;line-height:1.15}
+.tour .line i{flex:1;border-bottom:2px dotted var(--mut);transform:translateY(-6px);min-width:10px}
+.tour .line .pr{font-family:"Courier Prime",monospace;font-size:14px;white-space:nowrap;color:var(--br);font-weight:700}
+.tour .sub{font-family:"Courier Prime",monospace;color:var(--gr);font-size:14.5px;margin:2px 0 12px}
+.tour .lead{font-size:16px}
+.tour h4{font-family:"Courier Prime",monospace;font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--br);margin:16px 0 2px}
+.tour p{font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chips li{font-family:"Courier Prime",monospace;font-size:13px;font-weight:700;color:var(--gr);border:2px solid var(--gr);border-radius:6px;padding:2px 10px;transform:rotate(-2deg)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 26px;margin-top:18px;font-family:"Courier Prime",monospace}
+.meta dt{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}.meta dd{font-size:16px;font-weight:700}
+@media(max-width:760px){.menu{padding:10px 18px 22px}.tour{grid-template-columns:1fr;gap:16px}.tour .ph img{aspect-ratio:4/3}.tour .line .pr{display:none}.tour .line i{display:none}}
+#map{border-radius:6px;border:6px solid var(--paper)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.tile{background:var(--paper);border-radius:6px;padding:10px 10px 14px;text-decoration:none;box-shadow:0 2px 0 var(--line)}
+.tile .ph{height:170px;overflow:hidden;border-radius:3px}.tile img{width:100%;height:100%;object-fit:cover}
+.tile .tx{display:flex;flex-direction:column;padding:10px 4px 0}
+.tile .tag{font-family:"Courier Prime",monospace;font-size:12.5px;color:var(--gr);font-weight:700}.tile .nm{font-family:"Young Serif",serif;font-size:19px}.tile .hr{font-family:"Courier Prime",monospace;font-size:13px;color:var(--mut)}
+@media(max-width:760px){.tiles{grid-template-columns:1fr}}
+.guide{display:grid;grid-template-columns:1fr 1.2fr;gap:36px;align-items:start}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.board img{width:100%;aspect-ratio:1;object-fit:cover;border:7px solid #fff;box-shadow:0 3px 10px rgba(80,50,20,.18)}
+.board img:nth-child(1){aspect-ratio:3/4}.board img:nth-child(2){aspect-ratio:3/4}
+.letter{background:var(--paper);border-radius:6px;padding:30px 30px;box-shadow:0 2px 0 var(--line);background-image:repeating-linear-gradient(transparent 0 31px,rgba(154,91,46,.12) 31px 32px)}
+.letter h3{font-size:28px}.letter .msg p{margin-top:12px;font-size:15.5px}
+.letter .sign{font-family:"Young Serif",serif;font-size:22px;text-align:right;margin-top:12px;color:var(--br)}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.facts li{font-family:"Courier Prime",monospace;font-size:12.5px;font-weight:700;color:var(--br);border:2px solid var(--br);border-radius:6px;padding:1px 9px;transform:rotate(-2deg)}
+.facts a{text-decoration:none}
+@media(max-width:820px){.guide{grid-template-columns:1fr}.letter{padding:22px 18px}}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.steps li{background:var(--paper);border-radius:6px;padding:22px;box-shadow:0 2px 0 var(--line);position:relative}
+.steps .n{position:absolute;right:16px;top:10px;font-family:"Young Serif",serif;font-size:46px;color:rgba(154,91,46,.25)}
+.steps h3{font-size:20px}.steps p{font-size:14.5px;margin-top:6px}
+@media(max-width:760px){.steps{grid-template-columns:1fr}}
+.cta{margin-top:56px;background:var(--ink);color:#f3e8d4;border-radius:6px;padding:44px 24px;text-align:center}
+.cta h2{font-size:min(38px,8.4cqi);white-space:nowrap;margin:12px 0 6px}
+.cta p{max-width:34em;margin:0 auto 22px;color:#d8c8ac}
+.cta .stamp{color:#f1c58a;border-color:#f1c58a}
+.btn{display:inline-block;background:#f1c58a;color:var(--ink);text-decoration:none;font-family:"Courier Prime",monospace;font-weight:700;border-radius:6px;padding:12px 26px}
+.cta small{display:block;margin-top:14px;font-family:"Courier Prime",monospace;color:#bfae90}
+.foot{max-width:1000px;margin:52px auto 0;padding:22px 20px 40px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+
+</style>
+</head>
+<body>
+<div class="w">
+<nav class="top"><a class="logo" href="#">Yuri's Tokyo</a><div class="links"><a href="#tours">Menu</a><a href="#guide">Yuri</a><a href="#area">Map</a><a href="#how">Steps</a></div></nav>
+<header class="hero">
+ <div class="ph"><img src="img/yuri-cafe-cake.jpg" alt="Yuri smiling at a café table with tea and cake"></div>
+ <div class="tx cq">
+  <div class="open">Open on booked days only</div>
+  <h1>Come sit with me<br>in Tokyo</h1>
+  <p>Not just famous spots, but the small moments of everyday life. A cup of tea, a quiet garden, a cozy izakaya at night. A walk through the city, as if you were visiting a friend.</p>
+  <div class="sig"><img src="img/yuri-sakura-close.jpg" alt="Yuri"><span>— Yuri, nurse and guide from Kanazawa</span></div>
+ </div>
+</header>
+<dl class="key"><div><dt>For</dt><dd>Guests who want Tokyo's evening drinks and art at an easy, local pace.</dd></div><div><dt>When</dt><dd>Only on days Yuri is in Tokyo. Once your booking is confirmed, she travels down from Kanazawa.</dd></div><div><dt>Meet</dt><dd>An easy-to-find spot for each tour, like the steam locomotive at Shimbashi Station's SL Square.</dd></div><div><dt>First</dt><dd>Sit down for a drink, or step into the museum. Nothing rushed from the start.</dd></div><div><dt>Then</dt><dd>The rest follows the mood of the day. Peek down side streets and drop into places that catch your eye.</dd></div></dl>
+<div class="care"><div class="cq"><div class="stamp">Take it slow<span>ゆっくり</span></div><h2>A relaxed pace,<br>plenty of places to sit</h2></div><ul><li>Mostly sit-down bars and restaurants, not standing bars.</li><li>Short walks between stops. We agree on the walking distance before the day.</li><li>Your guide is a nurse, and walks close enough to notice when you need a break.</li></ul></div>
+
+<section id="tours"><div class="sh"><div class="stamp">Tours<span>ツアー</span></div><h2>Today's menu</h2></div>
+<div class="menu"><div class="hd cq"><h3>Three tours, all small</h3><div class="mono">Price on request · 料金は応相談</div></div>
+<article class="tour" id="t1"><div class="ph"><img src="img/yuri-izakaya-fan.jpg" alt="Yuri raising a drink and a folding fan at an izakaya" loading="lazy" style="object-position:50% 62%"></div><div class="cq"><div class="line"><h3>Shimbashi Night</h3><i></i><span class="pr">On request</span></div><div class="sub">Kimono bar-hopping</div><p class="lead">An evening of bar-hopping in Shimbashi, the after-work heart of Tokyo, with a guide in kimono. We meet at SL Square and wander into the izakaya lanes by the Karasumori exit. Not a tourist strip, just Tokyo's real after-work night.</p><h4>What you'll do</h4><p>We start with a toast at a sit-down izakaya and try the day's specials. Yuri takes care of the little alleys, how to walk in without breaking the regulars' easy mood, and how to order. You can add one slightly special stop, like fugu or seasonal small plates. We end by the steam locomotive at SL Square, talking over the night.</p>
+<h4>What's included</h4><p>Your private guide, help choosing and booking places, and help with ordering. Food and drinks are paid on the day, at cost.</p>
+<h4>Good to know</h4><p>This is not a stand-all-night tour. Non-drinkers enjoy it just as much with soft drinks. Solo travelers are welcome.</p><ul class="chips"><li>Sit-down bars</li><li>Guided in kimono</li><li>Small groups, solo welcome</li></ul><dl class="meta"><div><dt>Duration</dt><dd>About 2.5 hours</dd></div><div><dt>Starts</dt><dd>Around 18:00</dd></div><div><dt>Price</dt><dd>On request</dd></div></dl></div></article><article class="tour" id="t2"><div class="ph"><img src="img/yuri-lunch-set.jpg" alt="Yuri smiling over a set lunch" loading="lazy" style="object-position:50% 40%"></div><div class="cq"><div class="line"><h3>Kiyosumi Art Walk</h3><i></i><span class="pr">On request</span></div><div class="sub">Museum, garden and a classic lunch</div><p class="lead">The daytime tour Yuri, an art lover, recommends most. Take your time at the Museum of Contemporary Art Tokyo and Kiyosumi Gardens in Kiyosumi-Shirakawa, then lunch at a long-loved local spot. Quiet, green, and light on walking.</p><h4>What you'll do</h4><p>At the museum, Yuri picks the highlights from the special and collection exhibitions. Then a loop of Kiyosumi Gardens, slowly. We rest by the pond and talk about the stones and pines. Lunch is a teppan set meal at Fukagawatei, a long-standing local favorite.</p>
+<h4>What's included</h4><p>Your private guide, route planning, and guiding on the day. Admission fees and meals are extra, paid at cost.</p>
+<h4>Good to know</h4><p>A knee-friendly pace with breaks along the way. Not held on Mondays, when the museum is closed.</p><ul class="chips"><li>Museum and garden</li><li>Plenty of rest stops</li><li>Lunch at a local classic</li></ul><dl class="meta"><div><dt>Duration</dt><dd>About 3 hours</dd></div><div><dt>Starts</dt><dd>Around 10:30</dd></div><div><dt>Price</dt><dd>On request</dd></div></dl></div></article><article class="tour" id="t3"><div class="ph"><img src="img/yuri-ramen-lunch.jpg" alt="Yuri enjoying an early meal" loading="lazy" style="object-position:50% 35%"></div><div class="cq"><div class="line"><h3>Kagurazaka to Shimbashi</h3><i></i><span class="pr">On request</span></div><div class="sub">An afternoon stroll, then an evening hop</div><p class="lead">Walk the stone-paved lanes of Kagurazaka in the late afternoon, then ride over to Shimbashi for a drink. Tokyo by day and Tokyo by night, in one outing.</p><h4>What you'll do</h4><p>We stop at Akagi Shrine, then wander down Kagurazaka, peeking into the stone-paved alleys. Early dinner is ramen at Menya Fuufuutei, a popular Kagurazaka spot. Then one train to Shimbashi: SL Square lit up at night, and a last drink at an izakaya. One train ride and short walks, by design.</p>
+<h4>What's included</h4><p>Your private guide, and help choosing places and ordering. Food, drinks and train fares are extra, paid at cost.</p>
+<h4>Good to know</h4><p>We take Kagurazaka's slopes at an easy pace. On rainy days we can switch to a shorter, Shimbashi-only version.</p><ul class="chips"><li>Alleys and lanes</li><li>Just one train ride</li><li>Daylight into evening</li></ul><dl class="meta"><div><dt>Duration</dt><dd>About 3.5 hours</dd></div><div><dt>Starts</dt><dd>Around 16:00</dd></div><div><dt>Price</dt><dd>On request</dd></div></dl></div></article></div></section>
+
+<section id="guide"><div class="sh"><div class="stamp">Your guide<span>ガイド</span></div><h2>A note from Yuri</h2></div>
+<div class="guide"><div class="board"><img src="img/yuri-cafe-cushion.jpg" alt="Yuri hugging a cushion in a cozy café" loading="lazy"><img src="img/yuri-old-house.jpg" alt="Yuri in front of an old wooden house" loading="lazy"><img src="img/yuri-cheesecake.jpg" alt="Yuri with cheesecake" loading="lazy"><img src="img/yuri-cafe-smile.jpg" alt="Yuri laughing at a café" loading="lazy"></div>
+<div class="letter"><h3>Hi, I'm Yuri</h3><div class="msg"><p>I live in Kanazawa and work as a nurse.</p><p>In Tokyo, I love the stretch from Shinjuku to Shimbashi. In the bar streets of Shimbashi you can almost hear people saying “otsukaresama” (good work today) on their way home, and I never get tired of it. Walking in kimono changes how the city looks, just a little. I'd love to share that feeling with you.</p><p>I love art, too. Walking around neighborhoods with museums is how I spend my days off. In Shirakawa-go, people I guided asked me to guide them again.</p><p>My knees aren't the best, so I build my tours around two things: places to sit, and no rushing. If walking worries you, come just as you are.</p><p>When a booking comes in, I travel from Kanazawa to Tokyo. I'm looking forward to meeting you.</p></div><div class="sign">Yuri</div><ul class="facts"><li>Lives in Kanazawa</li><li>Nurse</li><li>Guides in kimono</li><li>Art lover</li><li>Asked back as a Shirakawa-go guide</li><li><a href="https://yuri.kanazawa-guide.com/" target="_blank" rel="noopener">Also guides in Kanazawa ↗</a></li></ul></div></div></section>
+
+<section id="area"><div class="sh"><div class="stamp">Area<span>エリア</span></div><h2>Our neighborhoods</h2></div><div id="map"></div></section>
+<section id="food"><div class="sh"><div class="stamp">Food<span>寄る店</span></div><h2>Where we eat</h2></div><div class="tiles"><a class="tile" href="https://www.google.com/maps/search/?api=1&query=%E7%8E%84%E5%93%81+%E9%8A%80%E5%BA%A7%E6%96%B0%E6%A9%8B" target="_blank" rel="noopener"><div class="ph"><img src="../img/tile-genpin.jpg" alt="Fugu sashimi at Genpin" loading="lazy"></div><div class="tx"><span class="tag">Fugu · Shimbashi</span><span class="nm">Genpin Ginza-Shimbashi</span><span class="hr">Weekdays 16:00–22:00</span></div></a><a class="tile" href="https://www.google.com/maps/search/?api=1&query=%E6%B7%B1%E5%B7%9D%E4%BA%AD+%E6%B8%85%E6%BE%84%E7%99%BD%E6%B2%B3" target="_blank" rel="noopener"><div class="ph"><img src="../img/tile-fukagawatei.jpg" alt="Teppan dishes at Fukagawatei" loading="lazy"></div><div class="tx"><span class="tag">Teppan set meals · Kiyosumi-Shirakawa</span><span class="nm">Fukagawatei</span><span class="hr">11:30–14:00 / 17:30–21:00</span></div></a><a class="tile" href="https://www.google.com/maps/search/?api=1&query=%E9%BA%BA%E5%B1%8B%E3%81%B5%E3%81%85%E3%81%B5%E3%81%85%E4%BA%AD+%E7%A5%9E%E6%A5%BD%E5%9D%82" target="_blank" rel="noopener"><div class="ph"><img src="../img/tile-fuufuutei.jpg" alt="Ramen at Menya Fuufuutei" loading="lazy"></div><div class="tx"><span class="tag">Ramen · Kagurazaka</span><span class="nm">Menya Fuufuutei</span><span class="hr">11:30–22:00</span></div></a></div></section>
+<section id="how"><div class="sh"><div class="stamp">Steps<span>流れ</span></div><h2>How it works</h2></div><ol class="steps"><li><span class="n">1</span><h3>Send your dates</h3><p>Tell us which tour and which dates you'd like, how many of you, and how much you want to walk.</p></li><li><span class="n">2</span><h3>We set the day</h3><p>The date is fixed to match Yuri's Tokyo trip. She takes care of the restaurant bookings.</p></li><li><span class="n">3</span><h3>Meet and enjoy</h3><p>That's it. Ordering and train changes are all on her.</p></li></ol>
+<div class="cta"><div class="stamp">Price on request</div><h2>Let's start with a chat</h2><p>This page is still being prepared. Full details on tours and dates are coming soon.</p><a class="btn" href="#tours">Back to the menu</a><small>Booking isn't open yet. We're getting it ready.</small></div></section>
+</div>
+<footer class="foot"><p>Tokyo with Yuri · in preparation</p><p>Photos of Yuri are her own. SL Square photo: Mike Peel (CC BY-SA 4.0, Wikimedia Commons). Other place photos taken on the tour routes.</p></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map=L.map('map',{scrollWheelZoom:false});var S=innerWidth<560,PW=S?70:96,PH=S?84:104;
+map.fitBounds([[35.6671,139.7355],[35.7020,139.7970]],{padding:S?[60,40]:[90,90]});
+var E='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
+L.tileLayer(E+'Base/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',maxZoom:16}).addTo(map);
+L.tileLayer(E+'Reference/MapServer/tile/{z}/{y}/{x}',{maxZoom:16,pane:'overlayPane'}).addTo(map);
+document.querySelector('.leaflet-tile-pane').style.filter='sepia(.6) saturate(1.1) brightness(.98)';
+[{"n": 1, "short": "Shimbashi", "name": "SL Square, Shimbashi", "sub": "Meeting point for Shimbashi Night", "img": "../img/pin-sl.jpg", "lat": 35.6671, "lng": 139.7576}, {"n": 2, "short": "Kagurazaka", "name": "Akagi Shrine, Kagurazaka", "sub": "Where the afternoon stroll begins", "img": "../img/pin-kagurazaka.jpg", "lat": 35.702, "lng": 139.7355}, {"n": 3, "short": "Kiyosumi", "name": "Kiyosumi Gardens", "sub": "The garden on the art walk", "img": "../img/pin-kiyosumi.jpg", "lat": 35.6799, "lng": 139.797}].forEach(function(s){
+ var icon=L.divIcon({className:'',html:'<div class="pin-card"><div style="background:#9a5b2e;color:#fff;font-size:12px;font-weight:700;text-align:center;padding:1px 0">'+s.n+'</div><img src="'+s.img+'" alt="" style="width:'+PW+'px;height:'+(S?44:62)+'px"><div class="nm">'+s.short+'</div></div>',iconSize:[PW,PH],iconAnchor:[PW/2,PH],popupAnchor:[0,-PH+6]});
+ L.marker([s.lat,s.lng],{icon:icon}).addTo(map).bindPopup('<b>'+s.name+'</b><br>'+s.sub);
+});
+</script>
+</body>
+</html>

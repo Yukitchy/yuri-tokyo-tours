@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokyo with Yuri | Big photos, few words</title>
+<meta name="description" content="Small private tours in Tokyo with Yuri, a nurse and guide from Kanazawa. Shimbashi at night, an art walk in Kiyosumi-Shirakawa, and a Kagurazaka stroll. Sit-down places, no rushing.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@400;600&family=Zen+Old+Mincho:wght@500&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fbf9f4;--card:#fff;--ink:#2c3440;--mut:#76808b;--ai:#4b6c8f;--ai2:#e5ecf3;--mc:#8a9a5b;--mc2:#eef1e3;--line:#e4e2da}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.7 "Source Sans 3",sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}ul{list-style:none}
+h1,h2,h3{font-family:Lora,serif;font-weight:500;line-height:1.15}
+.cq{container-type:inline-size}
+.fit{display:block;white-space:nowrap;font-size:min(var(--mx),calc(176cqi / var(--ch)))}
+.jp{font-family:"Zen Old Mincho",serif;color:var(--mc);font-size:13px;letter-spacing:.24em}
+.it{font-family:Lora,serif;font-style:italic}
+.bar{height:5px;background:linear-gradient(90deg,var(--ai) 0 50%,var(--mc) 50%)}
+.top{display:flex;justify-content:space-between;align-items:center;height:60px;padding:0 22px;max-width:1180px;margin:0 auto}
+.logo{font-family:Lora,serif;font-size:20px;text-decoration:none}.logo b{color:var(--ai);font-weight:500}
+.soon{font-size:12.5px;font-weight:600;color:var(--ai);border:1px solid currentColor;border-radius:99px;padding:2px 12px;white-space:nowrap}
+.book{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;font-weight:600;color:var(--ai)}
+.book span{white-space:nowrap}.book span::before{content:"";display:inline-block;width:14px;height:1px;background:currentColor;vertical-align:middle;margin-right:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags li{font-size:12.5px;font-weight:600;color:var(--ai);background:var(--ai2);border-radius:6px;padding:2px 10px}
+.when{font-size:13px;color:var(--mut);letter-spacing:.04em}
+.tt{color:var(--ai)}.tt2{color:var(--ai);font-size:min(22px,6cqi);white-space:nowrap;margin-top:2px}
+.sub{font-family:Lora,serif;font-style:italic;color:var(--mc);font-size:16px}
+.kz{font-weight:600;color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai);white-space:nowrap}
+.gl{font-size:14px;color:var(--mut)}
+.care h2{color:#4b5a2a;margin-top:6px}
+.care ul{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:16px}
+.care li{font-size:14px;font-weight:600;color:#4b5a2a;background:#fff;border-radius:99px;padding:4px 14px}
+.foot{max-width:1180px;margin:0 auto;padding:28px 22px 40px;font-size:12.5px;color:var(--mut);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+
+.grid{max-width:1180px;margin:0 auto;padding:6px 22px 30px;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:130px;gap:12px}
+.t{position:relative;overflow:hidden;border-radius:6px;background:var(--card)}
+.t>img,.t>#map{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.t .cap{position:absolute;left:0;right:0;bottom:0;padding:40px 16px 12px;font-family:Lora,serif;font-style:italic;color:#fff;font-size:15px;background:linear-gradient(transparent,rgba(30,40,55,.55))}
+.tour .cap{padding:70px 22px 20px;font-style:normal;display:flex;flex-direction:column;gap:6px;background:linear-gradient(transparent,rgba(30,40,55,.72) 55%)}
+.tour .cap .tt,.tour .cap .tt2{color:#fff}.tour .cap .when{color:#e6ebf0}.tour .cap .jp{color:#d9e3c2}
+.txt{padding:28px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.ttl{background:var(--bg);padding-left:6px}.ttl .it{font-size:19px;color:#4a525d}
+.care{background:var(--mc2)}
+.gd{background:var(--ai);color:#fff}.gd .tt,.gd .kz{color:#fff;border-color:#fff}.gd .gl{color:#dbe4ee}.gd .jp{color:#cfe0b0}
+.bk{background:var(--card)}
+#map{z-index:1}
+.w2{grid-column:span 2}.w3{grid-column:span 3}.w4{grid-column:span 4}.w6{grid-column:span 6}
+.h1{grid-row:span 1}.h2{grid-row:span 2}.h3{grid-row:span 3}.h4{grid-row:span 4}
+.pin{background:var(--ai);color:#fff;font:600 12px/1 "Source Sans 3";padding:5px 8px;border-radius:99px;white-space:nowrap;transform:translate(-50%,-50%);display:inline-block}
+@media(max-width:760px){
+ .grid{grid-template-columns:1fr 1fr;grid-auto-rows:minmax(44vw,auto);gap:8px;padding:4px 12px 24px}
+ .w2{grid-column:span 1}.w3,.w4,.w6{grid-column:span 2}
+ .h1,.h2,.h3,.h4{grid-row:span 1}.m2{grid-row:span 2}.mw{grid-column:span 2}
+ .txt{padding:22px 18px}
+ .mapt{min-height:72vw}
+}
+</style>
+</head>
+<body class="v3">
+<div class="bar"></div><nav class="top"><a class="logo" href="#">Tokyo with <b>Yuri</b></a><span class="soon">Opening soon</span></nav>
+<main class="grid">
+<figure class="t w3 h4 m2"><img src="../friendly/img/yuri-kimono-window.jpg" alt="Yuri in a pink kimono, smiling with her hands by her face" width="788" height="1400" style="object-position:50% 25%" loading="lazy"><figcaption class="cap">In kimono</figcaption></figure>
+<div class="t txt ttl w3 h2 cq"><p class="jp">東京を、ゆりと</p><h1 class="fit " style="--ch:14;--mx:64px">Tokyo, slowly.</h1><p class="it">As if you were visiting a friend.</p></div>
+<figure class="t w3 h2"><img src="../friendly/img/yuri-sakura-arms.jpg" alt="Yuri with both hands up under cherry blossoms" width="1400" height="1050" style="object-position:50% 35%" loading="lazy"><figcaption class="cap">Spring</figcaption></figure>
+<article class="t tour w2 h4 m2 mw" id="t01"><img src="../friendly/img/yuri-izakaya-fan.jpg" alt="Yuri with a folding fan and a drink at an izakaya" width="1050" height="1400" style="object-position:50% 30%" loading="lazy"><div class="cap cq"><p class="jp">01 · 新橋の夜</p><h2 class="fit tt" style="--ch:15;--mx:36px">Shimbashi Night</h2><p class="when">Kimono bar-hopping · Evening · about 2.5 h</p></div></article><article class="t tour w2 h4 m2 mw" id="t02"><img src="../friendly/img/yuri-garden-pond.jpg" alt="Yuri beside a Japanese garden pond" width="1400" height="1050" style="object-position:70% 50%" loading="lazy"><div class="cap cq"><p class="jp">02 · 清澄白河</p><h2 class="fit tt" style="--ch:27;--mx:36px">Kiyosumi-Shirakawa Art Walk</h2><p class="when">Museum · garden · lunch · Morning · about 3 h</p></div></article><article class="t tour w2 h4 m2 mw" id="t03"><img src="../friendly/img/yuri-street-wave.jpg" alt="Yuri waving on a sunny Tokyo street" width="1400" height="1050" style="object-position:45% 40%" loading="lazy"><div class="cap cq"><p class="jp">03 · 神楽坂から新橋へ</p><h2 class="fit tt" style="--ch:17;--mx:36px">Kagurazaka Stroll</h2><p class="tt2 it">& a Shimbashi Evening Hop</p><p class="when">Afternoon into evening · Afternoon · about 3.5 h</p></div></article>
+<section class="t txt care w2 h3 mw cq"><p class="jp">ゆっくり、座れる</p><h2><span class="fit ln" style="--ch:15;--mx:34px">A relaxed pace,</span><span class="fit ln" style="--ch:23;--mx:34px">plenty of places to sit</span></h2><ul><li>Sit-down bars & cafés</li><li>Short walks</li><li>Your guide is a nurse</li></ul></section>
+<div class="t w4 h3 mapt"><div id="map"></div></div>
+<figure class="t w2 h3 mw"><img src="../friendly/img/yuri-izakaya-beer.jpg" alt="Yuri raising a glass of beer at an izakaya" width="1050" height="1400" style="object-position:50% 20%" loading="lazy"><figcaption class="cap">Evenings</figcaption></figure>
+<div class="t txt gd w2 h3 mw cq" id="guide"><p class="jp">ガイド</p><h2 class="fit tt" style="--ch:12;--mx:40px">Hi, I'm Yuri</h2><p class="gl">Nurse · lives in Kanazawa · guides in kimono</p><a class="kz" href="https://yuri.kanazawa-guide.com/" target="_blank" rel="noopener">See her Kanazawa tours ↗</a></div>
+<figure class="t w2 h3"><img src="../friendly/img/yuri-sakura-close.jpg" alt="Yuri smiling under cherry blossoms" width="1050" height="1400" style="object-position:50% 40%" loading="lazy"><figcaption class="cap">Yuri</figcaption></figure><figure class="t w2 h3"><img src="../friendly/img/yuri-ramen-lunch.jpg" alt="Yuri enjoying an early meal" width="1050" height="1400" style="object-position:50% 30%" loading="lazy"><figcaption class="cap">Early dinner</figcaption></figure>
+<figure class="t w2 h3 mw"><img src="../friendly/img/yuri-lunch-set.jpg" alt="Yuri smiling over a set lunch" width="1400" height="1050" style="object-position:50% 40%" loading="lazy"><figcaption class="cap">Lunch</figcaption></figure><figure class="t w2 h3 mw"><img src="../friendly/img/yuri-yukata-fan.jpg" alt="Yuri in a yukata with a folding fan, Tokyo Skytree behind her" width="1050" height="1400" style="object-position:50% 55%" loading="lazy"><figcaption class="cap">Summer, in yukata</figcaption></figure>
+<div class="t txt bk w6 h2 cq"><p class="jp">料金はお問い合わせください</p><h2 class="fit tt" style="--ch:16;--mx:40px">See you in Tokyo</h2><p class="book"><span>Price on request</span><span>Bookings opening soon</span></p></div>
+</main>
+<footer class="foot"><p>Tokyo with Yuri · in preparation</p><p>Photos of Yuri are her own.</p></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var m=L.map('map',{scrollWheelZoom:false,attributionControl:true});
+m.fitBounds([[35.6671,139.7355],[35.7020,139.7970]],{padding:[50,50]});
+var E='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
+L.tileLayer(E+'Base/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',maxZoom:16}).addTo(m);
+L.tileLayer(E+'Reference/MapServer/tile/{z}/{y}/{x}',{maxZoom:16,pane:'overlayPane'}).addTo(m);
+[['Shimbashi',35.6671,139.7576],['Kagurazaka',35.702,139.7355],['Kiyosumi',35.6799,139.797]].forEach(function(p){
+ L.marker([p[1],p[2]],{icon:L.divIcon({className:'',html:'<span class="pin">'+p[0]+'</span>',iconSize:[0,0]})}).addTo(m);});
+</script>
+</body>
+</html>

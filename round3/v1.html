@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tokyo with Yuri | Layered windows</title>
+<meta name="description" content="Small private tours in Tokyo with Yuri, a nurse and guide from Kanazawa. Shimbashi at night, an art walk in Kiyosumi-Shirakawa, and a Kagurazaka stroll. Sit-down places, no rushing.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Source+Sans+3:wght@400;600&family=Zen+Old+Mincho:wght@500&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#fbf9f4;--card:#fff;--ink:#2c3440;--mut:#76808b;--ai:#4b6c8f;--ai2:#e5ecf3;--mc:#8a9a5b;--mc2:#eef1e3;--line:#e4e2da}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.7 "Source Sans 3",sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}ul{list-style:none}
+h1,h2,h3{font-family:Lora,serif;font-weight:500;line-height:1.15}
+.cq{container-type:inline-size}
+.fit{display:block;white-space:nowrap;font-size:min(var(--mx),calc(176cqi / var(--ch)))}
+.jp{font-family:"Zen Old Mincho",serif;color:var(--mc);font-size:13px;letter-spacing:.24em}
+.it{font-family:Lora,serif;font-style:italic}
+.bar{height:5px;background:linear-gradient(90deg,var(--ai) 0 50%,var(--mc) 50%)}
+.top{display:flex;justify-content:space-between;align-items:center;height:60px;padding:0 22px;max-width:1180px;margin:0 auto}
+.logo{font-family:Lora,serif;font-size:20px;text-decoration:none}.logo b{color:var(--ai);font-weight:500}
+.soon{font-size:12.5px;font-weight:600;color:var(--ai);border:1px solid currentColor;border-radius:99px;padding:2px 12px;white-space:nowrap}
+.book{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;font-weight:600;color:var(--ai)}
+.book span{white-space:nowrap}.book span::before{content:"";display:inline-block;width:14px;height:1px;background:currentColor;vertical-align:middle;margin-right:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags li{font-size:12.5px;font-weight:600;color:var(--ai);background:var(--ai2);border-radius:6px;padding:2px 10px}
+.when{font-size:13px;color:var(--mut);letter-spacing:.04em}
+.tt{color:var(--ai)}.tt2{color:var(--ai);font-size:min(22px,6cqi);white-space:nowrap;margin-top:2px}
+.sub{font-family:Lora,serif;font-style:italic;color:var(--mc);font-size:16px}
+.kz{font-weight:600;color:var(--ai);text-decoration:none;border-bottom:1px solid var(--ai);white-space:nowrap}
+.gl{font-size:14px;color:var(--mut)}
+.care h2{color:#4b5a2a;margin-top:6px}
+.care ul{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:16px}
+.care li{font-size:14px;font-weight:600;color:#4b5a2a;background:#fff;border-radius:99px;padding:4px 14px}
+.foot{max-width:1180px;margin:0 auto;padding:28px 22px 40px;font-size:12.5px;color:var(--mut);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+
+.lay{display:grid;min-height:175svh;view-timeline:--lay}
+.lay>*{grid-area:1/1}
+.bgw{position:sticky;top:0;height:100svh;overflow:hidden;align-self:start}
+.bgw img{width:100%;height:100%;object-fit:cover}
+.card{align-self:end;justify-self:start;position:relative;z-index:2;width:min(460px,88vw);margin:0 0 14svh 7vw;background:rgba(251,249,244,.95);padding:30px 32px 28px;display:flex;flex-direction:column;gap:10px}
+.lay.r .card{justify-self:end;margin-right:7vw}
+.card .fl{position:absolute;width:40%;aspect-ratio:3/4;object-fit:cover;right:-16%;top:-42%;border:6px solid var(--bg)}
+.lay.r .card .fl{right:auto;left:-16%}
+.card .num{font-family:Lora,serif;font-size:13px;color:var(--mut);letter-spacing:.12em}
+.hero .card{gap:12px}.lay.hero{min-height:calc(100svh - 65px)}.hero .bgw{height:calc(100svh - 65px)}
+@media(min-width:701px){.pt .bgw{background:var(--mc2)}.pt .bgw img{width:54%;margin-left:auto}.pt .card{margin-left:9vw}}
+.hero .it{font-size:18px;color:#4a525d}
+@supports (animation-timeline:view()){
+ .bgw img{animation:kb linear both;animation-timeline:--lay}
+ .card .fl{animation:drift linear both;animation-timeline:view()}
+ @keyframes kb{from{transform:scale(1.08)}to{transform:scale(1)}}
+ @keyframes drift{from{transform:translateY(70px)}to{transform:translateY(-70px)}}
+}
+.care{max-width:860px;margin:0 auto;padding:110px 22px;text-align:center}
+.care ul{justify-content:center}
+.end{text-align:center;padding:110px 22px 40px;display:flex;flex-direction:column;align-items:center;gap:14px}
+@media(max-width:700px){
+ .card{margin:0 auto 10svh;justify-self:center;padding:24px 22px}
+ .lay.r .card{justify-self:center;margin-right:auto}
+ .card .fl,.lay.r .card .fl{width:34%;right:6%;left:auto;top:auto;bottom:calc(100% - 28px)}
+ .care,.end{padding:80px 22px}
+}
+</style>
+</head>
+<body class="v1">
+<div class="bar"></div><nav class="top"><a class="logo" href="#">Tokyo with <b>Yuri</b></a><span class="soon">Opening soon</span></nav>
+<header class="lay hero pt"><div class="bgw"><img src="../friendly/img/yuri-kimono-window.jpg" alt="Yuri in a pink kimono, smiling with her hands by her face" width="788" height="1400" style="object-position:50% 28%"></div>
+<div class="card cq"><p class="jp">東京を、ゆりと</p><h1 class="fit " style="--ch:13;--mx:54px">Tokyo, slowly</h1><p class="it">As if you were visiting a friend.</p><p class="book"><span>Price on request</span><span>Bookings opening soon</span></p></div></header>
+<section class="care cq "><p class="jp">ゆっくり、座れる</p><h2><span class="fit ln" style="--ch:15;--mx:34px">A relaxed pace,</span><span class="fit ln" style="--ch:23;--mx:34px">plenty of places to sit</span></h2><ul><li>Sit-down bars & cafés</li><li>Short walks</li><li>Your guide is a nurse</li></ul></section>
+<section class="lay  pt" id="t01"><div class="bgw"><img src="../friendly/img/yuri-izakaya-fan.jpg" alt="Yuri with a folding fan and a drink at an izakaya" width="1050" height="1400" style="object-position:50% 30%" loading="lazy"></div>
+<div class="card cq"><img src="../friendly/img/yuri-izakaya-beer.jpg" alt="Yuri raising a glass of beer at an izakaya" width="1050" height="1400" class="fl" loading="lazy"><p class="num">TOUR 01 <span class="jp">新橋の夜</span></p><h2 class="fit tt" style="--ch:15;--mx:34px">Shimbashi Night</h2><p class="sub">Kimono bar-hopping</p><ul class="tags"><li>Sit-down izakaya</li><li>Guide in kimono</li><li>Solo welcome</li></ul><p class="when">Evening · about 2.5 h</p></div></section><section class="lay r" id="t02"><div class="bgw"><img src="../friendly/img/yuri-garden-pond.jpg" alt="Yuri beside a Japanese garden pond" width="1400" height="1050" style="object-position:70% 50%" loading="lazy"></div>
+<div class="card cq"><img src="../friendly/img/yuri-lunch-set.jpg" alt="Yuri smiling over a set lunch" width="1400" height="1050" class="fl" loading="lazy"><p class="num">TOUR 02 <span class="jp">清澄白河</span></p><h2 class="fit tt" style="--ch:27;--mx:34px">Kiyosumi-Shirakawa Art Walk</h2><p class="sub">Museum · garden · lunch</p><ul class="tags"><li>Museum of Contemporary Art Tokyo</li><li>Kiyosumi Gardens</li><li>Lunch at Fukagawatei</li></ul><p class="when">Morning · about 3 h</p></div></section><section class="lay " id="t03"><div class="bgw"><img src="../friendly/img/yuri-street-wave.jpg" alt="Yuri waving on a sunny Tokyo street" width="1400" height="1050" style="object-position:45% 40%" loading="lazy"></div>
+<div class="card cq"><img src="../friendly/img/yuri-alley-sign.jpg" alt="Yuri on a tree-lined Tokyo side street" width="1050" height="1400" class="fl" loading="lazy"><p class="num">TOUR 03 <span class="jp">神楽坂から新橋へ</span></p><h2 class="fit tt" style="--ch:17;--mx:34px">Kagurazaka Stroll</h2><p class="tt2 it">& a Shimbashi Evening Hop</p><p class="sub">Afternoon into evening</p><ul class="tags"><li>Akagi Shrine</li><li>Stone-paved lanes</li><li>One train to Shimbashi</li></ul><p class="when">Afternoon · about 3.5 h</p></div></section>
+<section class="lay r" id="guide"><div class="bgw"><img src="../friendly/img/yuri-sakura-wave.jpg" alt="Yuri waving under cherry blossoms" width="1400" height="1050" style="object-position:55% 40%" loading="lazy"></div>
+<div class="card cq"><img src="../friendly/img/yuri-sakura-close.jpg" alt="Yuri smiling under cherry blossoms" width="1050" height="1400" class="fl" loading="lazy"><p class="num">YOUR GUIDE <span class="jp">ゆり</span></p><h2 class="fit tt" style="--ch:12;--mx:40px">Hi, I'm Yuri</h2><p class="gl">Nurse · lives in Kanazawa · guides in kimono</p><a class="kz" href="https://yuri.kanazawa-guide.com/" target="_blank" rel="noopener">See her Kanazawa tours ↗</a></div></section>
+<section class="end cq"><p class="jp">料金はお問い合わせください</p><h2 class="fit tt" style="--ch:16;--mx:40px">See you in Tokyo</h2><p class="book"><span>Price on request</span><span>Bookings opening soon</span></p></section>
+<footer class="foot"><p>Tokyo with Yuri · in preparation</p><p>Photos of Yuri are her own.</p></footer>
+</body>
+</html>

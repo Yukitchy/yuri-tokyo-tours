@@ -35,7 +35,8 @@ nav.main{display:flex;gap:20px}
 nav.main a{text-decoration:none;font-size:13px;color:var(--ink);white-space:nowrap}
 nav.main a:hover{color:var(--red)}
 @media(max-width:560px){nav.main{gap:13px}nav.main a{font-size:12px}.logo{font-size:16px}}
-@media(max-width:480px){nav.main a:last-child{display:none}nav.main{gap:11px}}
+@media(max-width:480px){nav.main a:nth-child(n+4){display:none}nav.main{gap:11px}}
+.hero-grid figure,.intro-grid>*,.tiles>*,.flow>*,.care ul>*,.profile>*{min-width:0;min-height:0}
 
 /* hero */
 .hero{position:relative;background:var(--navy)}
